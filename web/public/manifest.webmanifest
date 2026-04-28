@@ -1,12 +1,13 @@
 {
   "name": "BaseForge",
   "short_name": "BaseForge",
-  "description": "Real-time Base ecosystem alerts",
+  "description": "Mint your trading agent. Own it on Base.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
+  "background_color": "#0b0d12",
   "theme_color": "#000000",
   "icons": [
-    { "src": "/nft/identity.svg", "sizes": "any", "type": "image/svg+xml" }
+    { "src": "/logo.png", "sizes": "any", "type": "image/png", "purpose": "any" },
+    { "src": "/logo.png", "sizes": "any", "type": "image/png", "purpose": "maskable" }
   ]
 }

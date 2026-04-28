@@ -31,8 +31,9 @@ export function HeaderNav() {
   return (
     <header className="border-b border-border sticky top-0 z-40 bg-bg/80 backdrop-blur supports-[backdrop-filter]:bg-bg/60">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
-        <Link href="/" className="font-semibold text-base sm:text-lg tracking-tight shrink-0">
-          ⚡ BaseForge
+        <Link href="/" className="font-semibold text-base sm:text-lg tracking-tight shrink-0 flex items-center gap-2">
+          <img src="/logo.png" alt="" width={28} height={28} className="w-7 h-7 shrink-0" />
+          BaseForge
         </Link>
 
         {/* Desktop nav */}

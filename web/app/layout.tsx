@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   description: "Token monitoring + AI-generated trade alerts for Base.",
   applicationName: "BaseForge",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/logo.png", type: "image/png" },
+    ],
+    apple: { url: "/logo.png", sizes: "180x180" },
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -22,6 +28,11 @@ export const metadata: Metadata = {
     title: "BaseForge — Real-time Base ecosystem alerts",
     description: "Mint your trading agent. Own it on Base.",
     type: "website",
+    images: [{ url: "/logo-512.png", width: 512, height: 512, alt: "BaseForge" }],
+  },
+  twitter: {
+    card: "summary",
+    images: ["/logo-512.png"],
   },
 };
 

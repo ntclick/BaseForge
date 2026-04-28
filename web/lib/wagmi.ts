@@ -10,7 +10,7 @@ export const wagmiConfig = createConfig({
     // Coinbase: Smart Wallet (passkey, no extension needed) + EOA extension fallback.
     coinbaseWallet({
       appName: "BaseForge",
-      appLogoUrl: "/nft/identity.svg",
+      appLogoUrl: "/logo.png",
       preference: "all",
     }),
     // Specific wallet targets — wagmi detects these via window.<name>
