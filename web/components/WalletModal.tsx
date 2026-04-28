@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useConnect } from "wagmi";
+import { useAccount, useConnect } from "wagmi";
 import { WALLET_META } from "@/lib/wagmi";
 
 interface Props {
@@ -10,27 +10,64 @@ interface Props {
 }
 
 function getWalletMeta(connector: { id: string; name: string }) {
-  // Try id first (covers coinbaseWalletSDK, metaMask, okxWallet, trustWallet, injected, walletConnect)
   const byId = WALLET_META[connector.id];
   if (byId) return byId;
-
-  // Fallback: name-based detection (in case wagmi changes connector.id)
   const lower = connector.name.toLowerCase();
   if (lower.includes("coinbase")) return WALLET_META.coinbaseWalletSDK;
   if (lower.includes("metamask")) return WALLET_META.metaMask;
   if (lower.includes("okx"))      return WALLET_META.okxWallet;
   if (lower.includes("trust"))    return WALLET_META.trustWallet;
   if (lower.includes("walletconnect")) return WALLET_META.walletConnect;
-
   return { name: connector.name || "Browser Wallet", icon: "/wallets/injected.svg" };
 }
 
+/** Detect if a specific wallet's provider is actually installed. */
+function isInstalled(connectorId: string): boolean {
+  if (typeof window === "undefined") return true;
+  // SDK-based connectors (Coinbase, WalletConnect) always available
+  if (connectorId === "coinbaseWalletSDK" || connectorId === "coinbaseWallet") return true;
+  if (connectorId === "walletConnect") return true;
+  const w = window as unknown as Record<string, unknown> & { ethereum?: { isMetaMask?: boolean; isCoinbaseWallet?: boolean } };
+  switch (connectorId) {
+    case "metaMask":
+    case "metaMaskSDK":
+      return !!w.ethereum?.isMetaMask;
+    case "okxWallet":
+    case "okx":
+      return !!w.okxwallet;
+    case "trustWallet":
+    case "trust":
+      return !!w.trustwallet || !!w.trust;
+    case "injected":
+      return !!w.ethereum;
+    default:
+      return true;
+  }
+}
+
+function installLink(connectorId: string): string | null {
+  switch (connectorId) {
+    case "metaMask":
+    case "metaMaskSDK":
+      return "https://metamask.io/download/";
+    case "okxWallet":
+    case "okx":
+      return "https://www.okx.com/web3";
+    case "trustWallet":
+    case "trust":
+      return "https://trustwallet.com/download";
+    default:
+      return null;
+  }
+}
+
 export function WalletModal({ onClose }: Props) {
-  const { connectors, connect, isPending, variables } = useConnect();
+  const { connectors, connect, isPending, variables, error: connectError, reset } = useConnect();
+  const { isConnected } = useAccount();
   const ref = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [pendingId, setPendingId] = useState<string | null>(null);
 
-  // Portal needs mount on client (avoid SSR issues)
   useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
@@ -49,20 +86,17 @@ export function WalletModal({ onClose }: Props) {
     return () => document.removeEventListener("keydown", handle);
   }, [onClose]);
 
-  // Lock body scroll while open
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  // Dedup logic:
-  //  1. The generic injected() connector duplicates whatever target wallet
-  //     currently owns window.ethereum (often OKX, MetaMask, etc.). Drop it
-  //     whenever ANY specific connector exists.
-  //  2. Beyond that, dedup by resolved wallet name so the same wallet never
-  //     appears twice (covers cases where two specific connectors collapse
-  //     to the same brand).
+  // Auto-close on successful connection
+  useEffect(() => {
+    if (isConnected) onClose();
+  }, [isConnected, onClose]);
+
   const hasSpecific = connectors.some((c) => c.id !== "injected" && c.id !== "walletConnect");
   const seenName = new Set<string>();
   const displayed = connectors.filter((c) => {
@@ -75,6 +109,14 @@ export function WalletModal({ onClose }: Props) {
   });
 
   if (!mounted) return null;
+
+  const friendlyError = (() => {
+    if (!connectError) return null;
+    const msg = connectError.message || "";
+    if (/reject|denied|user (cancelled|canceled)/i.test(msg)) return "Connection rejected in wallet.";
+    if (/no provider|not installed|provider undefined/i.test(msg)) return "Wallet extension not detected — please install or unlock it.";
+    return msg.slice(0, 200);
+  })();
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
@@ -93,37 +135,54 @@ export function WalletModal({ onClose }: Props) {
           </button>
         </div>
 
+        {friendlyError && (
+          <div className="mb-3 text-xs text-red-300 border border-red-900 bg-red-950 rounded-md p-2 flex items-start gap-2">
+            <span className="shrink-0">⚠️</span>
+            <span className="flex-1 break-words">{friendlyError}</span>
+            <button onClick={() => { reset(); setPendingId(null); }} className="text-red-400 hover:text-red-200 shrink-0">×</button>
+          </div>
+        )}
+
         <div className="space-y-2">
           {displayed.map((connector) => {
             const meta = getWalletMeta(connector);
-            const loading = isPending && variables?.connector === connector;
+            const installed = isInstalled(connector.id);
+            const link = installLink(connector.id);
+            const loading = (isPending && variables?.connector === connector) || pendingId === connector.id;
+
             return (
-              <button
-                key={connector.id}
-                onClick={() => {
-                  connect({ connector });
-                  onClose();
-                }}
-                disabled={isPending}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border bg-bg hover:bg-border transition-colors disabled:opacity-50 text-left"
-              >
-                <img
-                  src={meta.icon}
-                  alt={meta.name}
-                  width={32}
-                  height={32}
-                  loading="eager"
-                  decoding="async"
-                  className="rounded-md shrink-0 w-8 h-8"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/wallets/injected.svg";
+              <div key={connector.id}>
+                <button
+                  onClick={() => {
+                    if (!installed && link) {
+                      window.open(link, "_blank", "noopener");
+                      return;
+                    }
+                    setPendingId(connector.id);
+                    reset();
+                    connect({ connector });
                   }}
-                />
-                <span className="flex-1 text-sm font-medium">{meta.name}</span>
-                {loading && (
-                  <span className="text-xs text-gray-500 animate-pulse">Connecting…</span>
-                )}
-              </button>
+                  disabled={isPending}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border bg-bg hover:bg-border transition-colors disabled:opacity-50 text-left"
+                >
+                  <img
+                    src={meta.icon}
+                    alt={meta.name}
+                    width={32}
+                    height={32}
+                    loading="eager"
+                    decoding="async"
+                    className="rounded-md shrink-0 w-8 h-8"
+                    onError={(e) => { (e.target as HTMLImageElement).src = "/wallets/injected.svg"; }}
+                  />
+                  <span className="flex-1 text-sm font-medium">{meta.name}</span>
+                  {loading ? (
+                    <span className="text-xs text-emerald-400 animate-pulse">Connecting…</span>
+                  ) : !installed && link ? (
+                    <span className="text-[10px] uppercase tracking-wider text-amber-400">Install ↗</span>
+                  ) : null}
+                </button>
+              </div>
             );
           })}
         </div>
