@@ -3,20 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-type Stats = { identities: number; agents: number; alerts: number };
 type TopToken = { symbol: string; agents: number };
 
 export function LandingContent() {
-  const [stats, setStats] = useState<Stats>({ identities: 0, agents: 0, alerts: 0 });
   const [topTokens, setTopTokens] = useState<TopToken[]>([]);
 
   useEffect(() => {
     fetch("/api/showcase")
       .then((r) => r.json())
-      .then((data) => {
-        setStats(data.stats ?? { identities: 0, agents: 0, alerts: 0 });
-        setTopTokens(data.topTokens ?? []);
-      })
+      .then((data) => setTopTokens(data.topTokens ?? []))
       .catch(console.error);
   }, []);
 
@@ -50,13 +45,6 @@ export function LandingContent() {
             View dashboard
           </Link>
         </div>
-      </section>
-
-      {/* On-chain stats */}
-      <section className="grid grid-cols-3 gap-2 sm:gap-3 max-w-2xl mx-auto">
-        <Stat label="Identities" value={stats.identities} subtitle="soulbound" />
-        <Stat label="Agents" value={stats.agents} subtitle="on Base" />
-        <Stat label="Alerts" value={stats.alerts} subtitle="dispatched" />
       </section>
 
       {/* Hottest monitored tokens */}
@@ -108,12 +96,3 @@ export function LandingContent() {
   );
 }
 
-function Stat({ label, value, subtitle }: { label: string; value: number; subtitle: string }) {
-  return (
-    <div className="border border-border bg-surface rounded-lg p-3 sm:p-4 text-center">
-      <div className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight font-mono">{value.toLocaleString()}</div>
-      <div className="text-[11px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1">{label}</div>
-      <div className="text-[9px] sm:text-[10px] uppercase tracking-wider text-gray-600">{subtitle}</div>
-    </div>
-  );
-}
