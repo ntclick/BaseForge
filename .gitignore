@@ -15,6 +15,7 @@ build/
 *.pem
 *.key
 !.env.example
+.ssh/
 
 # Python
 __pycache__/
