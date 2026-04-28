@@ -35,9 +35,9 @@ export const WALLET_META: Record<string, { name: string; icon: string }> = {
   // Coinbase Wallet (multiple id variants across wagmi versions)
   coinbaseWalletSDK: { name: "Coinbase Wallet", icon: "/wallets/coinbase.png" },
   coinbaseWallet:    { name: "Coinbase Wallet", icon: "/wallets/coinbase.png" },
-  // MetaMask
-  metaMask:          { name: "MetaMask",         icon: "/wallets/metamask.png" },
-  metaMaskSDK:       { name: "MetaMask",         icon: "/wallets/metamask.png" },
+  // MetaMask (SVG from Wikimedia)
+  metaMask:          { name: "MetaMask",         icon: "/wallets/metamask.svg" },
+  metaMaskSDK:       { name: "MetaMask",         icon: "/wallets/metamask.svg" },
   // OKX
   okxWallet:         { name: "OKX Wallet",       icon: "/wallets/okx.png" },
   okx:               { name: "OKX Wallet",       icon: "/wallets/okx.png" },

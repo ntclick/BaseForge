@@ -36,6 +36,13 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Preload wallet icons so the connect modal opens with no flash */}
+        <link rel="preload" as="image" href="/wallets/coinbase.png" />
+        <link rel="preload" as="image" href="/wallets/metamask.svg" />
+        <link rel="preload" as="image" href="/wallets/okx.png" />
+        <link rel="preload" as="image" href="/wallets/trust.png" />
+      </head>
       <body suppressHydrationWarning>
         <Web3Provider>
           <HeaderNav />

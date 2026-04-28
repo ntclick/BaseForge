@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import Image from "next/image";
 import { useConnect } from "wagmi";
 import { WALLET_META } from "@/lib/wagmi";
 
@@ -108,12 +107,14 @@ export function WalletModal({ onClose }: Props) {
                 disabled={isPending}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border bg-bg hover:bg-border transition-colors disabled:opacity-50 text-left"
               >
-                <Image
+                <img
                   src={meta.icon}
                   alt={meta.name}
                   width={32}
                   height={32}
-                  className="rounded-md shrink-0"
+                  loading="eager"
+                  decoding="async"
+                  className="rounded-md shrink-0 w-8 h-8"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = "/wallets/injected.svg";
                   }}
