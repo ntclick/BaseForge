@@ -130,12 +130,16 @@ export function WalletModal({ onClose }: Props) {
 
   if (!mounted) return null;
 
+  const variablesConnector = variables?.connector as { id?: string } | undefined;
+  const lastConnectorId = pendingId ?? variablesConnector?.id;
+  const lastInstallLink = lastConnectorId ? installLink(lastConnectorId) : null;
+
   const friendlyError = (() => {
     if (!connectError) return null;
     const msg = connectError.message || "";
     if (/reject|denied|user (cancelled|canceled)/i.test(msg)) return "Connection rejected in wallet.";
     if (/provider not found|no provider|not installed|provider undefined|connectorNotConnected/i.test(msg)) {
-      return "This wallet's extension isn't installed (or is locked). Click the Install link, or unlock the extension and try again.";
+      return "Wallet extension not detected — make sure it's installed, unlocked, and refresh this page.";
     }
     if (/chain.*mismatch|switch chain|wrong network/i.test(msg)) return "Switch to Base mainnet in your wallet, then try again.";
     return msg.slice(0, 200);
@@ -159,10 +163,22 @@ export function WalletModal({ onClose }: Props) {
         </div>
 
         {friendlyError && (
-          <div className="mb-3 text-xs text-red-300 border border-red-900 bg-red-950 rounded-md p-2 flex items-start gap-2">
-            <span className="shrink-0">⚠️</span>
-            <span className="flex-1 break-words">{friendlyError}</span>
-            <button onClick={() => { reset(); setPendingId(null); }} className="text-red-400 hover:text-red-200 shrink-0">×</button>
+          <div className="mb-3 text-xs text-red-300 border border-red-900 bg-red-950 rounded-md p-2 space-y-1.5">
+            <div className="flex items-start gap-2">
+              <span className="shrink-0">⚠️</span>
+              <span className="flex-1 break-words">{friendlyError}</span>
+              <button onClick={() => { reset(); setPendingId(null); }} className="text-red-400 hover:text-red-200 shrink-0">×</button>
+            </div>
+            {lastInstallLink && (
+              <a
+                href={lastInstallLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-amber-400 hover:text-amber-300 underline text-[11px] pl-6"
+              >
+                Install / open the wallet ↗
+              </a>
+            )}
           </div>
         )}
 
@@ -170,17 +186,12 @@ export function WalletModal({ onClose }: Props) {
           {displayed.map((connector) => {
             const meta = getWalletMeta(connector);
             const installed = isInstalled(connector.id);
-            const link = installLink(connector.id);
             const loading = (isPending && variables?.connector === connector) || pendingId === connector.id;
 
             return (
               <div key={connector.id}>
                 <button
                   onClick={() => {
-                    if (!installed && link) {
-                      window.open(link, "_blank", "noopener");
-                      return;
-                    }
                     setPendingId(connector.id);
                     reset();
                     connect({ connector });
@@ -201,7 +212,7 @@ export function WalletModal({ onClose }: Props) {
                   <span className="flex-1 text-sm font-medium">{meta.name}</span>
                   {loading ? (
                     <span className="text-xs text-emerald-400 animate-pulse">Connecting…</span>
-                  ) : !installed && link ? (
+                  ) : !installed ? (
                     <span className="text-[10px] uppercase tracking-wider text-amber-400">Install ↗</span>
                   ) : null}
                 </button>
