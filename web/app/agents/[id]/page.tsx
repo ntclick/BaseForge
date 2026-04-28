@@ -260,11 +260,17 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
   async function sendTest() {
     setTesting(true);
     setTestStatus(null);
+    setError(null);             // clear stale errors before new attempt
     try {
       const r = await fetch(`/api/agents/${id}/test`, { method: "POST" });
       const data = await r.json();
-      setTestStatus(r.ok && data.ok ? "ok" : "fail");
-      if (!r.ok) setError(data.error ?? "test failed");
+      if (r.ok && data.ok) {
+        setTestStatus("ok");
+        setError(null);          // explicitly clear on success
+      } else {
+        setTestStatus("fail");
+        setError(data.error ?? "test failed");
+      }
     } catch (e) {
       setTestStatus("fail");
       setError(e instanceof Error ? e.message : "test error");
@@ -315,7 +321,16 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
-      {error && <div className="text-red-400 text-sm border border-red-800 bg-red-950 rounded p-3">{error}</div>}
+      {error && (
+        <div className="text-red-400 text-sm border border-red-800 bg-red-950 rounded p-3 flex items-start gap-2">
+          <span className="flex-1 break-words">{error}</span>
+          <button
+            onClick={() => setError(null)}
+            aria-label="Dismiss"
+            className="text-red-500 hover:text-red-300 shrink-0 leading-none"
+          >×</button>
+        </div>
+      )}
 
       {serviceStatus && !serviceStatus.online && (
         <div className="border border-amber-900 bg-amber-950 text-amber-300 rounded-lg p-3 text-xs space-y-1">
