@@ -27,17 +27,37 @@ function isInstalled(connectorId: string): boolean {
   // SDK-based connectors (Coinbase, WalletConnect) always available
   if (connectorId === "coinbaseWalletSDK" || connectorId === "coinbaseWallet") return true;
   if (connectorId === "walletConnect") return true;
-  const w = window as unknown as Record<string, unknown> & { ethereum?: { isMetaMask?: boolean; isCoinbaseWallet?: boolean } };
+
+  type EthProvider = { isMetaMask?: boolean; isCoinbaseWallet?: boolean; isTrust?: boolean; isOkxWallet?: boolean };
+  const w = window as unknown as {
+    ethereum?: EthProvider & { providers?: EthProvider[] };
+    okxwallet?: unknown;
+    okexchain?: unknown;
+    trustwallet?: unknown;
+    trustWallet?: unknown;
+    trust?: unknown;
+  };
+
+  // Helper: when multiple wallets share window.ethereum, they often expose
+  // .providers[] array — search both the root and the array for the flag.
+  const hasFlag = (flag: keyof EthProvider): boolean => {
+    if (w.ethereum?.[flag]) return true;
+    if (Array.isArray(w.ethereum?.providers)) {
+      return w.ethereum.providers.some((p) => !!p?.[flag]);
+    }
+    return false;
+  };
+
   switch (connectorId) {
     case "metaMask":
     case "metaMaskSDK":
-      return !!w.ethereum?.isMetaMask;
+      return hasFlag("isMetaMask");
     case "okxWallet":
     case "okx":
-      return !!w.okxwallet;
+      return !!w.okxwallet || !!w.okexchain || hasFlag("isOkxWallet");
     case "trustWallet":
     case "trust":
-      return !!w.trustwallet || !!w.trust;
+      return !!w.trustwallet || !!w.trustWallet || !!w.trust || hasFlag("isTrust");
     case "injected":
       return !!w.ethereum;
     default:
@@ -114,7 +134,10 @@ export function WalletModal({ onClose }: Props) {
     if (!connectError) return null;
     const msg = connectError.message || "";
     if (/reject|denied|user (cancelled|canceled)/i.test(msg)) return "Connection rejected in wallet.";
-    if (/no provider|not installed|provider undefined/i.test(msg)) return "Wallet extension not detected — please install or unlock it.";
+    if (/provider not found|no provider|not installed|provider undefined|connectorNotConnected/i.test(msg)) {
+      return "This wallet's extension isn't installed (or is locked). Click the Install link, or unlock the extension and try again.";
+    }
+    if (/chain.*mismatch|switch chain|wrong network/i.test(msg)) return "Switch to Base mainnet in your wallet, then try again.";
     return msg.slice(0, 200);
   })();
 
