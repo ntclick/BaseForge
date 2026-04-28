@@ -83,6 +83,14 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingConfig, setPendingConfig] = useState<AgentConfig | null>(null);
+  const [serviceStatus, setServiceStatus] = useState<{ online: boolean; reason?: string } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/agent-service/status")
+      .then((r) => r.json())
+      .then(setServiceStatus)
+      .catch(() => setServiceStatus({ online: false, reason: "fetch failed" }));
+  }, []);
 
   // Sign updateConfig() on the BaseForgeAgent contract
   const {
@@ -308,6 +316,18 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
       </div>
 
       {error && <div className="text-red-400 text-sm border border-red-800 bg-red-950 rounded p-3">{error}</div>}
+
+      {serviceStatus && !serviceStatus.online && (
+        <div className="border border-amber-900 bg-amber-950 text-amber-300 rounded-lg p-3 text-xs space-y-1">
+          <div className="font-medium">⚠️ Live monitor offline</div>
+          <p className="text-amber-200/80">
+            Your agent is saved on-chain and config is up to date, but the BaseForge monitoring
+            service is not reachable right now — real-time alerts won&apos;t fire until it&apos;s online.
+            Test alerts via the button above still work (they call Telegram directly).
+          </p>
+          {serviceStatus.reason && <p className="text-amber-500/60">Reason: {serviceStatus.reason}</p>}
+        </div>
+      )}
 
       {/* How it works */}
       <details className="border border-border bg-surface rounded-lg p-4 text-sm">

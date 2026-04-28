@@ -50,11 +50,11 @@ export default function NewAgentPage() {
   // Form-mode state
   const [token, setToken] = useState<Token | null>(null);
   const [enabledAlerts, setEnabledAlerts] = useState<string[]>(["trade_size", "volume_spike"]);
-  const [tradeSize, setTradeSize] = useState(50_000);
-  const [volMult, setVolMult] = useState(3);
+  const [tradeSize, setTradeSize] = useState(10_000);
+  const [volMult, setVolMult] = useState(2);
   const [rsiOver, setRsiOver] = useState(70);
   const [rsiUnder, setRsiUnder] = useState(30);
-  const [fundingThreshold, setFundingThreshold] = useState(0.05);
+  const [fundingThreshold, setFundingThreshold] = useState(0.03);
   const [reportInterval, setReportInterval] = useState(0);
 
   function buildFormConfig(): ParseResult | null {
