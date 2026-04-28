@@ -2,11 +2,10 @@
   "name": "baseforge",
   "version": "0.0.1",
   "private": true,
-  "packageManager": "pnpm@9.12.0",
   "scripts": {
-    "dev": "pnpm --filter web dev",
-    "build": "pnpm --filter web build",
-    "lint": "pnpm --filter web lint",
+    "dev": "cd web && npm run dev",
+    "build": "cd web && npm install --legacy-peer-deps && npm run build",
+    "lint": "cd web && npm run lint",
     "deploy:skills": "bash scripts/deploy-skills.sh"
   },
   "engines": {
