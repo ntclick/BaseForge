@@ -57,17 +57,21 @@ export function WalletModal({ onClose }: Props) {
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  // Smart dedup: if a specific named wallet is detected, hide the generic
-  // "injected" entry (which is usually the same wallet shown twice).
-  const specificIds = new Set(["coinbaseWalletSDK", "metaMask", "okxWallet", "trustWallet"]);
-  const hasSpecific = connectors.some((c) => specificIds.has(c.id));
-
-  const seen = new Set<string>();
+  // Dedup logic:
+  //  1. The generic injected() connector duplicates whatever target wallet
+  //     currently owns window.ethereum (often OKX, MetaMask, etc.). Drop it
+  //     whenever ANY specific connector exists.
+  //  2. Beyond that, dedup by resolved wallet name so the same wallet never
+  //     appears twice (covers cases where two specific connectors collapse
+  //     to the same brand).
+  const hasSpecific = connectors.some((c) => c.id !== "injected" && c.id !== "walletConnect");
+  const seenName = new Set<string>();
   const displayed = connectors.filter((c) => {
-    if (c.id === "injected" && hasSpecific) return false;   // hide generic dup
-    const key = c.id;
-    if (seen.has(key)) return false;
-    seen.add(key);
+    if (c.id === "injected" && hasSpecific) return false;
+    const meta = getWalletMeta(c);
+    const nameKey = meta.name.toLowerCase();
+    if (seenName.has(nameKey)) return false;
+    seenName.add(nameKey);
     return true;
   });
 
