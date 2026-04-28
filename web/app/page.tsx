@@ -1,11 +1,7 @@
-import type { Metadata } from "next";
 import { LandingContent } from "./landing-content";
 
-export const metadata: Metadata = {
-  other: {
-    "base:app_id": "69f0c295bf0a75fdec18c287",
-  },
-};
+// base:app_id meta tag is rendered in app/layout.tsx (top of <head>)
+// for Base App verifier. No per-page metadata override needed here.
 
 export default function Home() {
   return <LandingContent />;

@@ -48,6 +48,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Base App verifier looks for this tag — keep at the very top of <head>
+            so simple crawlers find it without parsing the whole document. */}
+        <meta name="base:app_id" content="69f0c295bf0a75fdec18c287" />
         {/* Preload wallet icons so the connect modal opens with no flash */}
         <link rel="preload" as="image" href="/wallets/coinbase.png" />
         <link rel="preload" as="image" href="/wallets/metamask.svg" />
