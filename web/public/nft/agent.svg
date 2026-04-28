@@ -1,30 +1,96 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#10B981"/>
-      <stop offset="100%" stop-color="#064E3B"/>
+    <linearGradient id="agBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A4A36"/>
+      <stop offset="50%" stop-color="#022B1A"/>
+      <stop offset="100%" stop-color="#000000"/>
     </linearGradient>
-    <linearGradient id="chart" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.6"/>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"  stop-color="#10B981" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
     </linearGradient>
+    <linearGradient id="scanLine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#34D399" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="agGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>
+      @keyframes scan       { 0% { transform: translateX(-100px); } 100% { transform: translateX(512px); } }
+      @keyframes candleA    { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(1.4); } }
+      @keyframes candleB    { 0%,100% { transform: scaleY(1.2); } 50% { transform: scaleY(0.7); } }
+      @keyframes candleC    { 0%,100% { transform: scaleY(0.8); } 50% { transform: scaleY(1.5); } }
+      @keyframes candleD    { 0%,100% { transform: scaleY(1.1); } 50% { transform: scaleY(0.9); } }
+      @keyframes dash       { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -200; } }
+      @keyframes blink      { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+      @keyframes pulseRing  { 0% { r: 18; opacity: 1; } 100% { r: 60; opacity: 0; } }
+      .scan      { animation: scan 4s linear infinite; }
+      .cA        { animation: candleA 2s ease-in-out infinite; transform-origin: bottom; transform-box: fill-box; }
+      .cB        { animation: candleB 2.4s ease-in-out infinite; transform-origin: bottom; transform-box: fill-box; }
+      .cC        { animation: candleC 2.8s ease-in-out infinite; transform-origin: bottom; transform-box: fill-box; }
+      .cD        { animation: candleD 3.2s ease-in-out infinite; transform-origin: bottom; transform-box: fill-box; }
+      .ema       { stroke-dasharray: 8 6; animation: dash 4s linear infinite; }
+      .live      { animation: blink 1.4s ease-in-out infinite; }
+      .ping      { animation: pulseRing 2s ease-out infinite; }
+    </style>
   </defs>
-  <rect width="512" height="512" fill="url(#bg2)"/>
-  <!-- chart pattern -->
-  <polyline points="60,300 100,260 140,280 180,220 220,250 260,180 300,200 340,140 380,170 420,120 460,150"
-            fill="none" stroke="url(#chart)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- candle bars -->
-  <g opacity="0.8">
-    <rect x="80"  y="265" width="8" height="40" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="120" y="240" width="8" height="60" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="160" y="210" width="8" height="80" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="200" y="230" width="8" height="50" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="240" y="170" width="8" height="90" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="280" y="190" width="8" height="60" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="320" y="130" width="8" height="80" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="360" y="160" width="8" height="50" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="400" y="110" width="8" height="70" fill="#FFFFFF" opacity="0.4"/>
+
+  <rect width="512" height="512" fill="url(#agBg)"/>
+
+  <!-- Grid -->
+  <g stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="1">
+    <line x1="0" y1="120" x2="512" y2="120"/>
+    <line x1="0" y1="180" x2="512" y2="180"/>
+    <line x1="0" y1="240" x2="512" y2="240"/>
+    <line x1="0" y1="300" x2="512" y2="300"/>
+    <line x1="0" y1="360" x2="512" y2="360"/>
   </g>
-  <text x="256" y="420" font-family="system-ui,-apple-system,sans-serif" font-size="36" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">BASEFORGE</text>
-  <text x="256" y="455" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="500" fill="#FFFFFF" opacity="0.7" text-anchor="middle" letter-spacing="8">AGENT</text>
+
+  <!-- Animated EMA line -->
+  <polyline class="ema" points="40,300 100,260 160,280 220,200 280,230 340,150 400,180 460,110"
+            fill="none" stroke="url(#lineGrad)" stroke-width="3" stroke-linecap="round" filter="url(#agGlow)"/>
+
+  <!-- Animated candlesticks (wicks + bodies) -->
+  <g stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="1">
+    <line x1="84"  y1="210" x2="84"  y2="320"/>
+    <line x1="124" y1="200" x2="124" y2="310"/>
+    <line x1="164" y1="180" x2="164" y2="290"/>
+    <line x1="204" y1="200" x2="204" y2="290"/>
+    <line x1="244" y1="160" x2="244" y2="280"/>
+    <line x1="284" y1="180" x2="284" y2="280"/>
+    <line x1="324" y1="130" x2="324" y2="240"/>
+    <line x1="364" y1="160" x2="364" y2="240"/>
+    <line x1="404" y1="110" x2="404" y2="220"/>
+  </g>
+  <g>
+    <rect class="cA" x="78"  y="240" width="12" height="60" rx="1" fill="#10B981"/>
+    <rect class="cB" x="118" y="220" width="12" height="80" rx="1" fill="#34D399"/>
+    <rect class="cC" x="158" y="190" width="12" height="100" rx="1" fill="#10B981"/>
+    <rect class="cD" x="198" y="220" width="12" height="70" rx="1" fill="#34D399"/>
+    <rect class="cA" x="238" y="170" width="12" height="110" rx="1" fill="#10B981"/>
+    <rect class="cB" x="278" y="190" width="12" height="80" rx="1" fill="#34D399"/>
+    <rect class="cC" x="318" y="140" width="12" height="100" rx="1" fill="#10B981"/>
+    <rect class="cD" x="358" y="170" width="12" height="70" rx="1" fill="#34D399"/>
+    <rect class="cA" x="398" y="120" width="12" height="100" rx="1" fill="#10B981"/>
+  </g>
+
+  <!-- Vertical scanning line -->
+  <g class="scan">
+    <rect x="0" y="100" width="3" height="280" fill="url(#scanLine)" opacity="0.8"/>
+  </g>
+
+  <!-- Live status pulse -->
+  <g transform="translate(450 60)">
+    <circle class="ping" cx="0" cy="0" r="18" fill="#10B981"/>
+    <circle class="live" cx="0" cy="0" r="8" fill="#34D399"/>
+    <text x="-22" y="6" font-family="system-ui" font-size="14" font-weight="700" fill="#34D399" text-anchor="end" letter-spacing="1">LIVE</text>
+  </g>
+
+  <!-- Brand text -->
+  <text x="256" y="430" font-family="system-ui,-apple-system,sans-serif" font-size="36" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="3">BASEFORGE</text>
+  <text x="256" y="465" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#FFFFFF" fill-opacity="0.7" text-anchor="middle" letter-spacing="10">AGENT</text>
 </svg>

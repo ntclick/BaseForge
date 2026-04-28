@@ -15,12 +15,15 @@ export async function GET(_req: Request, { params }: { params: Promise<{ tokenId
   const origin = new URL(_req.url).origin;
   const ipfsCid = process.env.IPFS_IDENTITY_IMAGE_CID;
   const image = ipfsCid ? `ipfs://${ipfsCid}` : `${origin}/nft/identity.svg`;
+  const animatedSvg = `${origin}/nft/identity.svg`;
   const metadata = {
     name: `BaseForge Identity #${tokenId}`,
     description:
       "Soulbound proof-of-membership for BaseForge — the on-chain Base ecosystem alert network. " +
       "Required to mint and operate Agent NFTs. Non-transferable.",
     image,
+    animation_url: animatedSvg,        // animated SVG for OpenSea/Rainbow viewers
+    image_url: image,
     external_url: "https://baseforge.app",
     attributes: [
       { trait_type: "Type", value: "Identity" },

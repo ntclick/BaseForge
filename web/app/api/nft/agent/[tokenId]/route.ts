@@ -22,6 +22,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ tokenId:
   const enabledAlerts = cfg.enabled_alerts ?? [];
   const ipfsCid = process.env.IPFS_AGENT_IMAGE_CID;
   const image = ipfsCid ? `ipfs://${ipfsCid}` : `${origin}/nft/agent.svg`;
+  const animatedSvg = `${origin}/nft/agent.svg`;
 
   const metadata = {
     name: agent?.name
@@ -32,6 +33,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ tokenId:
         `Tracks ${enabledAlerts.length} alert type${enabledAlerts.length === 1 ? "" : "s"}: ${enabledAlerts.join(", ")}.`
       : "Unconfigured BaseForge Agent NFT — waiting for owner to set up monitoring rules.",
     image,
+    animation_url: animatedSvg,
+    image_url: image,
     external_url: agent ? `https://baseforge.app/agents/${tokenId}` : "https://baseforge.app",
     attributes: [
       { trait_type: "Type", value: "Agent" },

@@ -1,18 +1,68 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0052FF"/>
-      <stop offset="100%" stop-color="#001A4D"/>
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#0066FF" stop-opacity="0.5"/>
+      <stop offset="60%" stop-color="#001A4D" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="boltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7DD3FC"/>
+      <stop offset="50%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0284C7"/>
     </linearGradient>
-    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.3"/>
-    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      @keyframes pulse  { 0%,100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+      @keyframes spin   { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes spinR  { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+      @keyframes flicker{ 0%,100% { opacity: 1; } 8% { opacity: 0.6; } 12% { opacity: 1; } 20% { opacity: 0.85; } 24% { opacity: 1; } }
+      @keyframes float  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+      .pulse   { animation: pulse 2.4s ease-in-out infinite; transform-origin: 256px 240px; }
+      .spin    { animation: spin 14s linear infinite; transform-origin: 256px 240px; }
+      .spinR   { animation: spinR 22s linear infinite; transform-origin: 256px 240px; }
+      .flicker { animation: flicker 4s ease-in-out infinite; }
+      .float   { animation: float 3s ease-in-out infinite; transform-origin: 256px 240px; }
+      .dash    { stroke-dasharray: 6 10; animation: spin 30s linear infinite; transform-origin: 256px 240px; }
+    </style>
   </defs>
-  <rect width="512" height="512" fill="url(#bg)"/>
-  <circle cx="256" cy="240" r="120" fill="none" stroke="url(#ring)" stroke-width="4"/>
-  <circle cx="256" cy="240" r="80" fill="#FFFFFF" opacity="0.95"/>
-  <text x="256" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="64" font-weight="700" fill="#0052FF" text-anchor="middle">⚡</text>
-  <text x="256" y="420" font-family="system-ui,-apple-system,sans-serif" font-size="36" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">BASEFORGE</text>
-  <text x="256" y="455" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="500" fill="#FFFFFF" opacity="0.7" text-anchor="middle" letter-spacing="6">IDENTITY</text>
+
+  <rect width="512" height="512" fill="url(#bgGrad)"/>
+
+  <!-- Outer rotating dashed ring -->
+  <circle class="dash" cx="256" cy="240" r="160" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="1.5"/>
+
+  <!-- Mid spinning ring -->
+  <g class="spin">
+    <circle cx="256" cy="240" r="135" fill="none" stroke="#7DD3FC" stroke-opacity="0.5" stroke-width="2"/>
+    <circle cx="121" cy="240" r="3" fill="#7DD3FC"/>
+    <circle cx="391" cy="240" r="3" fill="#38BDF8"/>
+  </g>
+
+  <!-- Counter-spinning inner ring -->
+  <g class="spinR">
+    <circle cx="256" cy="240" r="105" fill="none" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="1"/>
+    <circle cx="151" cy="240" r="2" fill="#FFFFFF"/>
+    <circle cx="361" cy="240" r="2" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Pulsing core circle -->
+  <circle class="pulse" cx="256" cy="240" r="80" fill="#FFFFFF" fill-opacity="0.95"/>
+
+  <!-- Lightning bolt with glow + flicker -->
+  <g class="float" filter="url(#glow)">
+    <g class="flicker">
+      <path d="M270 170 L220 250 L255 250 L240 320 L290 230 L255 230 Z"
+            fill="url(#boltGrad)" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+    </g>
+  </g>
+
+  <!-- Brand text -->
+  <text x="256" y="430" font-family="system-ui,-apple-system,sans-serif" font-size="36" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="3">BASEFORGE</text>
+  <text x="256" y="465" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="600" fill="#FFFFFF" fill-opacity="0.7" text-anchor="middle" letter-spacing="8">IDENTITY</text>
 </svg>
