@@ -1,0 +1,77 @@
+// BaseForge DB schema (mirrors baseforge.* tables on Supabase project yxnmthhkvmjuuapsbchw).
+// Migrations are owned by Supabase MCP (`apply_migration`); this file exists for type-safe
+// Prisma queries from the Next.js web app. Run `prisma db pull` to refresh after schema changes.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["baseforge"]
+}
+
+model User {
+  id                    String   @id @default(uuid()) @db.Uuid
+  walletAddress         String   @unique @map("wallet_address")
+  email                 String?  @unique
+  telegramChatId        String?  @map("telegram_chat_id")
+  notificationChannels  Json     @default("{\"telegram\": true, \"email\": false}") @map("notification_channels")
+  llmProvider           String?  @map("llm_provider")
+  llmKeyEnc             String?  @map("llm_key_enc")
+  plan                  String   @default("free")
+  identityTokenId       Decimal? @unique @map("identity_token_id") @db.Decimal(78, 0)
+  identityMintedAt      DateTime? @map("identity_minted_at") @db.Timestamptz(6)
+  identityTxHash        String?  @map("identity_tx_hash")
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  agents                Agent[]
+
+  @@map("users")
+  @@schema("baseforge")
+}
+
+model Agent {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  name          String
+  tokenSymbol   String    @map("token_symbol")
+  prompt        String?
+  config        Json      @default("{}")
+  status        String    @default("active")
+  nftTokenId    Decimal?  @unique @map("nft_token_id") @db.Decimal(78, 0)
+  nftMintedAt   DateTime? @map("nft_minted_at") @db.Timestamptz(6)
+  nftTxHash     String?   @map("nft_tx_hash")
+  lastAlertAt   DateTime? @map("last_alert_at") @db.Timestamptz(6)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alerts        Alert[]
+
+  @@index([userId])
+  @@map("agents")
+  @@schema("baseforge")
+}
+
+model Alert {
+  id          String   @id @default(uuid()) @db.Uuid
+  agentId     String   @map("agent_id") @db.Uuid
+  type        String
+  severity    String
+  title       String
+  detail      String?
+  payload     Json     @default("{}")
+  delivered   Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  agent       Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([agentId, createdAt(sort: Desc)])
+  @@map("alerts")
+  @@schema("baseforge")
+}

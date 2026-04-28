@@ -1,0 +1,15 @@
+{
+  "agent_id": "600367ed-1bdb-4799-b616-fad9fb641e53",
+  "token": "BTC",
+  "telegram_chat_id": "123456",
+  "trade_size_usd": 100000.0,
+  "volume_multiplier": 3.0,
+  "rsi_oversold": 30.0,
+  "rsi_overbought": 70.0,
+  "enabled_alerts": [
+    "trade_size",
+    "rsi_extreme"
+  ],
+  "llm_provider": "openai",
+  "status": "active"
+}

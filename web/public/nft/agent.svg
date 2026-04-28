@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#064E3B"/>
+    </linearGradient>
+    <linearGradient id="chart" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg2)"/>
+  <!-- chart pattern -->
+  <polyline points="60,300 100,260 140,280 180,220 220,250 260,180 300,200 340,140 380,170 420,120 460,150"
+            fill="none" stroke="url(#chart)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- candle bars -->
+  <g opacity="0.8">
+    <rect x="80"  y="265" width="8" height="40" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="120" y="240" width="8" height="60" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="160" y="210" width="8" height="80" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="200" y="230" width="8" height="50" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="240" y="170" width="8" height="90" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="280" y="190" width="8" height="60" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="320" y="130" width="8" height="80" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="360" y="160" width="8" height="50" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="400" y="110" width="8" height="70" fill="#FFFFFF" opacity="0.4"/>
+  </g>
+  <text x="256" y="420" font-family="system-ui,-apple-system,sans-serif" font-size="36" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">BASEFORGE</text>
+  <text x="256" y="455" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="500" fill="#FFFFFF" opacity="0.7" text-anchor="middle" letter-spacing="8">AGENT</text>
+</svg>

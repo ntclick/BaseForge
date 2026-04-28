@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0052FF"/>
+      <stop offset="100%" stop-color="#001A4D"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="240" r="120" fill="none" stroke="url(#ring)" stroke-width="4"/>
+  <circle cx="256" cy="240" r="80" fill="#FFFFFF" opacity="0.95"/>
+  <text x="256" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="64" font-weight="700" fill="#0052FF" text-anchor="middle">⚡</text>
+  <text x="256" y="420" font-family="system-ui,-apple-system,sans-serif" font-size="36" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">BASEFORGE</text>
+  <text x="256" y="455" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="500" fill="#FFFFFF" opacity="0.7" text-anchor="middle" letter-spacing="6">IDENTITY</text>
+</svg>

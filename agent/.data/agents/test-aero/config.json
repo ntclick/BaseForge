@@ -1,0 +1,16 @@
+{
+  "agent_id": "test-aero",
+  "token": "AERO",
+  "telegram_chat_id": "0",
+  "trade_size_usd": 1000.0,
+  "volume_multiplier": 2.0,
+  "rsi_oversold": 30,
+  "rsi_overbought": 70,
+  "enabled_alerts": [
+    "trade_size",
+    "volume_spike",
+    "rsi_extreme"
+  ],
+  "llm_provider": "openai",
+  "status": "active"
+}

@@ -1,0 +1,56 @@
+# Node
+node_modules/
+.pnpm-store/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+.turbo/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Hermes runtime artifacts (should live on VPS, not in repo)
+hermes-skills/.local/
+**/llm_key.enc
+**/agent.log
+
+# Agent runtime data (contains user secrets — chat_ids, bot tokens, configs)
+agent/data/
+agent/tests/_testdata/
+
+# Hardhat / contracts build artifacts
+contracts/cache/
+contracts/artifacts/
+contracts/typechain-types/
+
+# Root-level screenshots (only docs/screenshots/* belongs in repo)
+/image.png
+/Screenshot*.png
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Coverage
+coverage/
+.nyc_output/

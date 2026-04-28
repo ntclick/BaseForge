@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  /* Prevent iOS Safari from zooming form inputs <16px */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html, body {
+  background: #0b0d12;
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  /* Prevent horizontal scroll on mobile from any overflowing element */
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Tap targets: min 44px on iOS guidelines */
+button, [role="button"], a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS: prevent input zoom (font-size must be >= 16px on focus) */
+input, textarea, select {
+  font-size: 16px;
+}
+@media (min-width: 640px) {
+  input, textarea, select {
+    font-size: 14px;
+  }
+}
+
+/* Smoother scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #1a1d24 0%, #252830 50%, #1a1d24 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
