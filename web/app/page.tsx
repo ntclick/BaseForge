@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { LandingContent } from "./landing-content";
 
-const BASE_APP_ID = "69df5e6c2dd1dde3dd9460f1";
+const BASE_APP_ID = "69f0c295bf0a75fdec18c287";
 
 export const metadata: Metadata = {
   other: {
