@@ -262,7 +262,22 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
     setTestStatus(null);
     setError(null);             // clear stale errors before new attempt
     try {
-      const r = await fetch(`/api/agents/${id}/test`, { method: "POST" });
+      // Send current form state — lets user preview unsaved changes
+      // before committing on-chain via "Sign & save".
+      const liveConfig: AgentConfig = {
+        trade_size_usd: tradeSize,
+        volume_multiplier: volMult,
+        rsi_oversold: rsiUnder,
+        rsi_overbought: rsiOver,
+        funding_rate_threshold: fundingThreshold,
+        enabled_alerts: enabledAlerts,
+        report_interval_minutes: reportInterval,
+      };
+      const r = await fetch(`/api/agents/${id}/test`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ config: liveConfig }),
+      });
       const data = await r.json();
       if (r.ok && data.ok) {
         setTestStatus("ok");

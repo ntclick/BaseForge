@@ -25,9 +25,21 @@ type Snapshot = {
   rsi1h?: number;
 };
 
-export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const sb = supabaseServer().schema("baseforge");
+
+  // Optional body lets the edit page send the user's CURRENT form state
+  // (unsaved checkboxes / thresholds) so the test reflects what they're
+  // about to save — not whatever was last persisted.
+  let bodyOverride: Cfg | null = null;
+  try {
+    const txt = await req.text();
+    if (txt && txt.length > 1) {
+      const parsed = JSON.parse(txt);
+      if (parsed?.config) bodyOverride = parsed.config as Cfg;
+    }
+  } catch { /* no body, fall back to DB */ }
 
   const { data: agent, error } = await sb
     .from("agents")
@@ -44,7 +56,8 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     return NextResponse.json({ error: "No Telegram bot configured." }, { status: 400 });
   }
 
-  const cfg = (agent.config ?? {}) as Cfg;
+  // Body override wins over DB config so user can preview unsaved changes
+  const cfg: Cfg = bodyOverride ?? ((agent.config ?? {}) as Cfg);
   const symbol = agent.token_symbol as string;
 
   // Look up coingecko_id from seeded tokens
