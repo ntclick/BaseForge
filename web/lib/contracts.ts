@@ -1,7 +1,12 @@
 import type { Address } from "viem";
 
-export const IDENTITY_ADDRESS = (process.env.NEXT_PUBLIC_IDENTITY_ADDRESS ?? "0x0000000000000000000000000000000000000000") as Address;
-export const AGENT_ADDRESS = (process.env.NEXT_PUBLIC_AGENT_ADDRESS ?? "0x0000000000000000000000000000000000000000") as Address;
+// Deployed mainnet addresses (Base, chainId 8453). Hard-coded as defaults so
+// deployments without the env vars still get the real contracts.
+const DEFAULT_IDENTITY = "0x8c134df21b0ce82e6e0a2fef6715e3525ccc4759";
+const DEFAULT_AGENT    = "0xa7e0c1e5a08a0174ab92caaf95e9d6a46edaed3b";
+
+export const IDENTITY_ADDRESS = (process.env.NEXT_PUBLIC_IDENTITY_ADDRESS || DEFAULT_IDENTITY) as Address;
+export const AGENT_ADDRESS    = (process.env.NEXT_PUBLIC_AGENT_ADDRESS    || DEFAULT_AGENT) as Address;
 
 export const IDENTITY_ABI = [
   { type: "function", name: "mint", stateMutability: "nonpayable", inputs: [], outputs: [{ type: "uint256" }] },

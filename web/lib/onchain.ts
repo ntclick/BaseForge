@@ -59,8 +59,13 @@ const IDENTITY_MINTED_EVENT = parseAbiItem(
 const AGENT_MINTED_TOPIC = toEventSelector(AGENT_MINTED_EVENT);
 const IDENTITY_MINTED_TOPIC = toEventSelector(IDENTITY_MINTED_EVENT);
 
-/** Block at which BaseForgeAgent was deployed — set NEXT_PUBLIC_AGENT_DEPLOY_BLOCK to bound the log scan. */
-const FROM_BLOCK = BigInt(process.env.NEXT_PUBLIC_AGENT_DEPLOY_BLOCK || process.env.AGENT_DEPLOY_BLOCK || "0");
+/** Block at which BaseForgeAgent was deployed — bounds the log scan window.
+ *  Hard-coded fallback (45279493) matches the Base mainnet deploy commit. */
+const FROM_BLOCK = BigInt(
+  process.env.NEXT_PUBLIC_AGENT_DEPLOY_BLOCK
+    || process.env.AGENT_DEPLOY_BLOCK
+    || "45279493"
+);
 
 const ERC721_TOKEN_URI_ABI = [
   { type: "function", name: "tokenURI", stateMutability: "view", inputs: [{ type: "uint256" }], outputs: [{ type: "string" }] },
