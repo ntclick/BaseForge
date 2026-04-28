@@ -25,12 +25,21 @@ export const wagmiConfig = createConfig({
 
 export const targetChain = base;
 
-/** Display metadata for the connect modal, keyed by connector.id */
+/** Display metadata for the connect modal, keyed by connector.id (with aliases). */
 export const WALLET_META: Record<string, { name: string; icon: string }> = {
+  // Coinbase Wallet (multiple id variants across wagmi versions)
   coinbaseWalletSDK: { name: "Coinbase Wallet", icon: "/wallets/coinbase.svg" },
+  coinbaseWallet:    { name: "Coinbase Wallet", icon: "/wallets/coinbase.svg" },
+  // MetaMask
   metaMask:          { name: "MetaMask",         icon: "/wallets/metamask.svg" },
-  okxWallet:         { name: "OKX Wallet",        icon: "/wallets/okx.svg" },
-  trustWallet:       { name: "Trust Wallet",      icon: "/wallets/trust.svg" },
-  injected:          { name: "Browser Wallet",    icon: "/wallets/injected.svg" },
-  walletConnect:     { name: "WalletConnect",     icon: "/wallets/walletconnect.svg" },
+  metaMaskSDK:       { name: "MetaMask",         icon: "/wallets/metamask.svg" },
+  // OKX (multiple variants — wagmi uses "okxWallet", OKX SDK may use "okx")
+  okxWallet:         { name: "OKX Wallet",       icon: "/wallets/okx.svg" },
+  okx:               { name: "OKX Wallet",       icon: "/wallets/okx.svg" },
+  // Trust
+  trustWallet:       { name: "Trust Wallet",     icon: "/wallets/trust.svg" },
+  trust:             { name: "Trust Wallet",     icon: "/wallets/trust.svg" },
+  // Generic
+  injected:          { name: "Browser Wallet",   icon: "/wallets/injected.svg" },
+  walletConnect:     { name: "WalletConnect",    icon: "/wallets/walletconnect.svg" },
 };

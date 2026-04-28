@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0052FF"/><path d="M16 6C10.477 6 6 10.477 6 16s4.477 10 10 10 10-4.477 10-10S21.523 6 16 6zm0 4a6 6 0 110 12A6 6 0 0116 10zm-2.5 3.5v5h5v-5h-5z" fill="white"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="6" fill="#0052FF"/>
+  <!-- White outer circle with cutout — official Coinbase mark -->
+  <circle cx="16" cy="16" r="9" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+  <rect x="13" y="13" width="6" height="6" rx="1" fill="#FFFFFF"/>
+</svg>
